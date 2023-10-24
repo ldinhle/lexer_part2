@@ -154,11 +154,11 @@ def whileStmt():
 
 def returnStmt():
     global token_pointer
-        expression()
-        if lookup(";"):
-            consume()
-        else:
-            sys.exit("Failure")
+    expression()
+    if lookup(";"):
+        consume()
+    else:
+        sys.exit("Failure")
 
 def assignOp():
     global token_pointer
@@ -167,17 +167,27 @@ def assignOp():
 
 def expression():
     global token_pointer
-    conjuction()
+    conjunction()
     while token_pointer < len(tokens):
-        if lookup("||")
+        if lookup("||"):
             consume()
             conjunction()
 
-def conjection
-    global
+def conjunction():
+    global token_pointer
+    equality()
+    while token_pointer < len(tokens):
+        if lookup("&&"):
+            consume()
+            equality()
 
 
-        
+def equality():
+
+
+
+
+
 
         
     # conjunction() or while token_pointer < len(tokens):
@@ -193,24 +203,24 @@ def conjection
 #         term()
 
 #Term -> Factor {(+|-) Factor}
-def term():
-    global token_pointer
-    factor()
-    while token_pointer < len(tokens) and (tokens[token_pointer] == "*" or tokens[token_pointer] == "/"):
-        token_pointer += 1
-        factor()
+# def term():
+#     global token_pointer
+#     factor()
+#     while token_pointer < len(tokens) and (tokens[token_pointer] == "*" or tokens[token_pointer] == "/"):
+#         token_pointer += 1
+#         factor()
 
-#Factor -> intLiteral
-def factor():
-    global token_pointer
-    if token_pointer < len(tokens) and tokens[token_pointer] == "intLiteral":
-        token_pointer += 1
-    else: #operand (intLiteral) missing
-        error("Missing intLiteral at index " + str(token_pointer))
+# #Factor -> intLiteral
+# def factor():
+#     global token_pointer
+#     if token_pointer < len(tokens) and tokens[token_pointer] == "intLiteral":
+#         token_pointer += 1
+#     else: #operand (intLiteral) missing
+#         error("Missing intLiteral at index " + str(token_pointer))
     
-def error(msg):
-    print(msg)
-    exit()
+# def error(msg):
+#     print(msg)
+#     exit()
 
 if __name__ == "__main__":
     main()
