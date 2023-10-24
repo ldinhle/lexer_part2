@@ -6,18 +6,24 @@
 #Factor -> intLiteral
 
 import sys
+import re
 
-#TODO: Should I add a failure case?
-#      
-tokens = ["intLiteral", "+", "intLiteral", "*", "intLiteral"] #input
+token_list = [] #input
 token_pointer = 0
 
-def main():
-    expression() #start symbol
-    if token_pointer < len(tokens): #could not consume the whole input
-        error("Incomplete expression. Error at index " + str(token_pointer))
-    else:
-        print("Valid Expression!")
+def read_file(filename: str) -> list:
+    tokens = list()
+    with open(filename, 'r') as file:
+        for x in file:
+            tokens.append(x[0])
+    return tokens
+
+# def main():
+#     expression() #start symbol
+#     if token_pointer < len(tokens): #could not consume the whole input
+#         error("Incomplete expression. Error at index " + str(token_pointer))
+#     else:
+#         print("Valid Expression!")
 
 def lookup(t):
     return token_pointer < len(tokens) and tokens[token_pointer] == t
@@ -27,7 +33,6 @@ def consume():
 
 def program():
     global token_pointer
-
     if lookup("type"):
         consume()
     if lookup("main"):
@@ -183,11 +188,56 @@ def conjunction():
 
 
 def equality():
+    global token_pointer
+    relation()
+    if lookup("relOp"):
+        consume()
+        relation()
+    
+def relation():
+    global token_pointer
+    addition() 
+    if lookup("relOp"):
+        consume()
+        addition()
 
+def addition():
+    global token_pointer
+    term()
+    while token_pointer < len(tokens):
+        if lookup("addOp"):
+            consume()
+            term()
 
+def term():
+    global token_pointer
+    factor()
+    while token_pointer < len(tokens):
+        if lookup("multOp"):
+            consume()
+            factor()
+        
+def factor():
+    global token_pointer
+    if lookup("UnaryOp"):  #question about to make this it's own variable or not...
+        consume() #or should I make it it's own thing?
+    primary()
 
+def primary():
+    global token_pointer
+    if lookup("id") or lookup("intLiteral") or lookup("boolLiteral") or lookup("floatLiteral") \
+        or lookup("charLiteral"):
+            consume()
+    if lookup("("):
+        consume()
+        expression()
+        if lookup(")"):
+            consume()
+    else:
+        sys.exit("Failure")
 
-
+def comment():
+    return 0
 
         
     # conjunction() or while token_pointer < len(tokens):
@@ -222,5 +272,12 @@ def equality():
 #     print(msg)
 #     exit()
 
+
+def main(input_file_name: str):
+    # Reading in file
+    global token_list
+    token_list = read_file(input_file_name)
+    program()
+
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])
